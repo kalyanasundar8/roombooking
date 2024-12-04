@@ -42,7 +42,7 @@ const signup = async (req, res) => {
     });
     if (existingUser) {
       const conflictField =
-        existingUser.email === email ? "email" : "mobile number";
+        existingUser.email === email ? "email" : "mobilenumber";
       return res
         .status(400)
         .json({ message: `User ${conflictField} already exists.` });
@@ -115,4 +115,56 @@ const verifyOtp = async (req, res) => {
   }
 };
 
-export { signup, verifyOtp };
+// Signin
+const signin = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(200).json({
+        message: `The ${email} is not in our record try different email`,
+      });
+    }
+
+    // Compare the password
+    const validPassword = await bcrypt.compare(password, user.password);
+
+    if (!validPassword) {
+      return res
+        .status(400)
+        .json({ message: "Incorrect password, please try again" });
+    }
+
+    // Generate a token
+    const token = GenerateToken(user._id);
+
+    // Set cookie
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+    });
+
+    return res.status(200).json({
+      message: "Signin successfully",
+      user: {
+        id: user._id,
+        email: user.email,
+        username: user.username,
+        token: token,
+      },
+    });
+  } catch (error) {
+    console.error("Signin Error: ", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export { signup, verifyOtp, signin };

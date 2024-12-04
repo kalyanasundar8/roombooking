@@ -7,6 +7,7 @@ dotenv.config();
 // Modules
 import connectToDb from "./config/db.js";
 import userRoutes from "./routes/UserRoutes.js";
+import { errorHandler } from "./middlewares/ErrorHandler.js";
 
 // Db Connection
 connectToDb();
@@ -21,6 +22,7 @@ const port = process.env.PORT;
 server.use(express.json());
 server.use(express.urlencoded({ extended: true }));
 server.use(parser());
+server.use(errorHandler);
 
 // Routes
 server.use("/api/user", userRoutes);
