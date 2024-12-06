@@ -108,7 +108,7 @@ const verifyOtp = async (req, res) => {
     user.verified = true;
     await user.save();
 
-    return res.status(400).json({ message: "OTP verified successfully" });
+    return res.status(200).json({ message: "OTP verified successfully" });
   } catch (error) {
     console.error("OTP verification Error: ", error);
     return res.status(500).json({ message: "Intenal server error." });
@@ -125,6 +125,21 @@ const signin = async (req, res) => {
     }
 
     const user = await User.findOne({ email });
+
+    if (user && user.verified === false) {
+      // Generate otp
+      const otp = generateOTP();
+
+      user.otp = otp;
+      await user.save();
+
+      // Send a OTP mail
+      sendEmail(user.email, user.otp);
+
+      return res.status(400).json({
+        message: `The ${email} was already registered but not verified, We sent a otp to your email`,
+      });
+    }
 
     if (!user) {
       return res.status(200).json({
