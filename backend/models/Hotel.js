@@ -10,22 +10,22 @@ const hotelSchema = new mongoose.Schema(
       type: String,
       required: false,
     },
-    address: {
-      street: { type: String, required: true },
-      city: { type: String, required: true },
-      state: { type: String, required: true },
-      country: { type: String, required: true },
-      zip: { type: String, required: true },
+    street: { type: String, required: true },
+    city: { type: String, required: true },
+    state: { type: String, required: true },
+    country: { type: String, required: true },
+    zip: { type: String, required: true },
+    mobilenumber: {
+      type: String,
+      required: true,
     },
-    contact: {
-      mobileNumber: {
-        type: String,
-        required: true,
-      },
-      email: {
-        type: String,
-        required: true,
-      },
+    email: {
+      type: String,
+      required: true,
+    },
+    otp: {
+      type: String,
+      required: true,
     },
     amenities: {
       type: [String],
@@ -48,6 +48,10 @@ const hotelSchema = new mongoose.Schema(
     numReviews: {
       type: Number,
       default: 0,
+    },
+    password: {
+      type: String,
+      required: true,
     },
     verified: {
       type: Boolean,

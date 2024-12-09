@@ -1,13 +1,14 @@
 import express from "express";
 import colors from "colors";
 import parser from "cookie-parser";
-import dotenv, { parse } from "dotenv";
+import dotenv from "dotenv";
 dotenv.config();
 
 // Modules
 import connectToDb from "./config/db.js";
 import userRoutes from "./routes/UserRoutes.js";
 import { errorHandler } from "./middlewares/ErrorHandler.js";
+import hotelRoutes from "./routes/HotelRoutes.js";
 
 // Db Connection
 connectToDb();
@@ -26,6 +27,7 @@ server.use(errorHandler);
 
 // Routes
 server.use("/api/user", userRoutes);
+server.use("/api/hotel", hotelRoutes);
 
 server.listen(port, () => {
   console.log(`Server listening port: ${port}`.bgBlue);
